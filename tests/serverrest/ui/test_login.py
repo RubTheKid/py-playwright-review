@@ -134,3 +134,5 @@ def test_login_with_registered_user(page: Page, serverrest_config: ServerRestCon
     welcome_h1 = page.locator('h1:has-text("bem vindo")')
     expect(welcome_h1).to_be_visible(timeout=5000)
     expect(welcome_h1).to_contain_text(nome, timeout=5000)
+
+    

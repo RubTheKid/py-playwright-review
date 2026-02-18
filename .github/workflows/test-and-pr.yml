@@ -1,0 +1,80 @@
+name: Run Tests and Open PR
+
+on:
+  push:
+    branches:
+      - tests
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          allow-prereleases: true
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        run: playwright install --with-deps chromium
+
+      - name: Run tests
+        id: run_tests
+        run: |
+          python -m pytest tests/serverrest/ui/test_login.py -q --junitxml=report.xml || true
+
+      - name: Check success rate
+        id: check
+        run: |
+          python -c "
+          import xml.etree.ElementTree as ET
+          import os
+
+          tree = ET.parse('report.xml')
+          root = tree.getroot()
+          ts = root if root.tag == 'testsuite' else root.find('testsuite')
+          total = int(ts.get('tests', 0))
+          failures = int(ts.get('failures', 0))
+          errors = int(ts.get('errors', 0))
+          passed = total - failures - errors
+          rate = (passed / total * 100) if total > 0 else 0
+
+          print(f'Total: {total} | Passed: {passed} | Failed: {failures} | Errors: {errors}')
+          print(f'Success rate: {rate:.1f}%')
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'success_rate={rate:.1f}\n')
+              f.write(f'should_pr={\"true\" if rate >= 75 else \"false\"}\n')
+          "
+
+      - name: Open PR to main
+        if: steps.check.outputs.should_pr == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Success rate: ${{ steps.check.outputs.success_rate }}% - Opening PR"
+          gh pr create \
+            --base main \
+            --head tests \
+            --title "Merge tests - ${{ steps.check.outputs.success_rate }}% passing" \
+            --body "Automated PR. Success rate: ${{ steps.check.outputs.success_rate }}% (threshold: 75%)" \
+            || echo "PR already exists or could not be created"
+
+      - name: Fail if below threshold
+        if: steps.check.outputs.should_pr == 'false'
+        run: |
+          echo "Test failed: success rate ${{ steps.check.outputs.success_rate }}% is below 75% threshold"
+          exit 1
