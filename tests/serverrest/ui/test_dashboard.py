@@ -3,15 +3,9 @@ from playwright.sync_api import Page
 
 from tests.serverrest.config import ServerRestConfig
 from tests.serverrest.api.helpers.api_helpers import delete_user_by_email
-from tests.serverrest.ui.helpers.ui_helpers import (
-    go_to_login,
-    fill_login_form,
-    fill_register_form,
-    expect_user_logged_in,
-    open_admin_register_page,
-    expect_user_in_list,
-    fill_admin_register_form,
-)
+from tests.serverrest.ui.pages.login_page import LoginPage
+from tests.serverrest.ui.pages.admin_register_page import AdminRegisterPage
+from tests.serverrest.ui.support.ui_tasks import login_as, admin_register_user
 
 
 class TestDashboard:
@@ -30,11 +24,10 @@ class TestDashboard:
         new_password = "senha123"
 
         try:
-            go_to_login(page, serverrest_config)
-            fill_login_form(page, registered_user["email"], registered_user["password"])
-            expect_user_logged_in(page, registered_user["nome"])
-            open_admin_register_page(page)
-            fill_admin_register_form(page, new_name, new_email, new_password, "true")
-            expect_user_in_list(page, serverrest_config, new_email, new_name, new_password)
+            login_as(page, serverrest_config, registered_user["email"], registered_user["password"])
+            LoginPage(page, serverrest_config).expect_logged_in(registered_user["nome"])
+
+            admin_register_user(page, serverrest_config, new_name, new_email, new_password)
+            AdminRegisterPage(page, serverrest_config).expect_user_in_list(new_email, new_name, new_password)
         finally:
             delete_user_by_email(serverrest_config, new_email)
