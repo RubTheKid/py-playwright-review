@@ -36,24 +36,24 @@ jobs:
 
       - name: Run UI tests
         id: run_ui_tests
+        continue-on-error: true
         run: |
-          python -m pytest tests/serverrest/ui/ -q -m ui --junitxml=report-ui.xml --alluredir=allure-results || true
+          python -m pytest tests/serverrest/ui/ -q -m ui --junitxml=report-ui.xml --alluredir=allure-results
 
       - name: Run API tests
         id: run_api_tests
+        continue-on-error: true
         run: |
-          python -m pytest tests/serverrest/api/ -q -m api --junitxml=report-api.xml --alluredir=allure-results || true
+          python -m pytest tests/serverrest/api/ -q -m api --junitxml=report-api.xml --alluredir=allure-results
 
       - name: Merge XML reports
         run: |
           python -c "
           import xml.etree.ElementTree as ET
-          import glob, os
+          import glob
 
           reports = glob.glob('report-*.xml')
-          if not reports:
-              print('No reports found')
-              exit(0)
+          print(f'Found reports: {reports}')
 
           merged = ET.Element('testsuites')
           for path in reports:
@@ -64,6 +64,10 @@ jobs:
               else:
                   for ts in root.findall('testsuite'):
                       merged.append(ts)
+
+          if len(merged) == 0:
+              print('No test results found - creating empty report')
+              empty_ts = ET.SubElement(merged, 'testsuite', tests='0', failures='0', errors='0')
 
           ET.ElementTree(merged).write('report.xml')
           print(f'Merged {len(reports)} report(s) into report.xml')
