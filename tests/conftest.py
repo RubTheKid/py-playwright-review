@@ -1,7 +1,8 @@
 import pytest
 
 from tests.serverrest.config import ServerRestConfig, load_serverrest_config
-from tests.serverrest.support.api_tasks import delete_user_by_email, create_user  
+from tests.serverrest.support.api_tasks import delete_user_by_email, create_user
+from tests.serverrest.api.helpers.api_helpers import login_admin, delete_product_by_nome
 
 @pytest.fixture(scope="session")
 def serverrest_config() -> ServerRestConfig:
@@ -23,3 +24,17 @@ def registered_user(serverrest_config: ServerRestConfig):
 
     # teardown
     delete_user_by_email(serverrest_config, email)
+
+@pytest.fixture
+def registered_product(serverrest_config: ServerRestConfig, registered_user):
+    """Setup: delete 'Product 1' if leftover from previous run. Teardown: delete after test."""
+    nome = "Product 1"
+    token = login_admin(serverrest_config, registered_user["email"], registered_user["password"])
+
+    # setup
+    delete_product_by_nome(serverrest_config, token, nome)
+
+    yield {"nome": nome, "token": token}
+
+    # teardown
+    delete_product_by_nome(serverrest_config, token, nome)
