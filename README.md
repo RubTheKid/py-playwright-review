@@ -1,10 +1,25 @@
-Execute all tests
+## Test Commands
+
+### Run all tests
 .\venv\Scripts\python.exe -m pytest -q
 
-Execute only login tests
-.\venv\Scripts\python.exe -m pytest tests\serverrest\ui\test_login.py -q
+### Run only login tests
+.\venv\Scripts\python.exe -m pytest tests\serverrest\ui\login-register\ -q
 
-Execute a individual test
-.\venv\Scripts\python.exe -m pytest tests\serverrest\ui\test_login.py::test_login_page_loads -q
+### Run only admin tests
+.\venv\Scripts\python.exe -m pytest tests\serverrest\ui\admin\ -q
 
-Note: .env file is not in .gitignore because it uses public API URLs
+### Run a single test
+.\venv\Scripts\python.exe -m pytest tests\serverrest\ui\login-register\test_login.py::test_login_page_loads -q
+
+
+## Allure Report (requires Java installed)
+
+### Run tests and save results
+.\venv\Scripts\python.exe -m pytest tests\serverrest\ui\ -q --alluredir=allure-results
+
+### Open report in browser
+allure serve allure-results
+
+## Notes
+- Environment variables: SERVERREST_UI_BASE_URL, SERVERREST_API_BASE_URL
