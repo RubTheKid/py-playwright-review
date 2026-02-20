@@ -1,7 +1,7 @@
 import time
 import requests
 
-from tests.serverrest.config import ServerRestConfig
+from src.config import ServerRestConfig
 
 def delete_user_by_email(config: ServerRestConfig, email: str) -> None:
     try:

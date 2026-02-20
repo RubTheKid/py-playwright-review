@@ -1,12 +1,12 @@
 import pytest
 from playwright.sync_api import Page
 
-from tests.serverrest.config import ServerRestConfig
-from tests.serverrest.api.helpers.api_helpers import delete_user_by_email
-from tests.serverrest.ui.pages.login_page import LoginPage
-from tests.serverrest.ui.pages.admin_register_page import AdminRegisterPage
-from tests.serverrest.ui.pages.admin_register_product import AdminRegisterProductPage
-from tests.serverrest.ui.pages.admin_list_product import AdminListProductPage
+from src.config import ServerRestConfig
+from src.api.helpers.api_helpers import delete_user_by_email
+from src.ui.pages.login_page import LoginPage
+from src.ui.pages.admin_register_page import AdminRegisterPage
+from src.ui.pages.admin_register_product import AdminRegisterProductPage
+from src.ui.pages.admin_list_product import AdminListProductPage
 
 
 class TestDashboard:

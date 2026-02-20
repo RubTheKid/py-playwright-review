@@ -1,8 +1,8 @@
 from playwright.sync_api import Page
-from tests.serverrest.config import ServerRestConfig
-from tests.serverrest.ui.pages.login_page import LoginPage
-from tests.serverrest.ui.pages.register_page import RegisterPage
-from tests.serverrest.ui.pages.admin_register_page import AdminRegisterPage
+from src.config import ServerRestConfig
+from src.ui.pages.login_page import LoginPage
+from src.ui.pages.register_page import RegisterPage
+from src.ui.pages.admin_register_page import AdminRegisterPage
 
 
 def login_as(page: Page, config: ServerRestConfig, email: str, password: str) -> None:

@@ -38,13 +38,13 @@ jobs:
         id: run_ui_tests
         continue-on-error: true
         run: |
-          python -m pytest tests/serverrest/ui/ -q -m ui --junitxml=report-ui.xml --alluredir=allure-results
+          python -m pytest tests/ui/ -q -m ui --junitxml=report-ui.xml --alluredir=allure-results
 
       - name: Run API tests
         id: run_api_tests
         continue-on-error: true
         run: |
-          python -m pytest tests/serverrest/api/ -q -m api --junitxml=report-api.xml --alluredir=allure-results
+          python -m pytest tests/api/ -q -m api --junitxml=report-api.xml --alluredir=allure-results
 
       - name: Merge XML reports
         run: |
