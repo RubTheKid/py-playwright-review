@@ -1,5 +1,5 @@
 from playwright.sync_api import Page
-from tests.serverrest.config import ServerRestConfig
+from src.config import ServerRestConfig
 
 class BasePage:
     def __init__(self, page: Page, config: ServerRestConfig) -> None:

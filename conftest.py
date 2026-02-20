@@ -1,8 +1,8 @@
 import pytest
 
-from tests.serverrest.config import ServerRestConfig, load_serverrest_config
-from tests.serverrest.support.api_tasks import delete_user_by_email, create_user
-from tests.serverrest.api.helpers.api_helpers import login_admin, delete_product_by_nome
+from src.config import ServerRestConfig, load_serverrest_config
+from src.api.helpers.api_helpers import delete_user_by_email, create_user
+from src.api.helpers.api_helpers import login_admin, delete_product_by_nome
 
 @pytest.fixture(scope="session")
 def serverrest_config() -> ServerRestConfig:

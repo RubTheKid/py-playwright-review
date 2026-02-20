@@ -1,4 +1,4 @@
-from tests.serverrest.ui.pages.base_page import BasePage
+from src.ui.pages.base_page import BasePage
 from playwright.sync_api import expect
 
 class AdminListProductPage(BasePage):
