@@ -1,29 +1,38 @@
 import pytest
+from playwright.sync_api import Page
 
 from src.config import ServerRestConfig, load_serverrest_config
 from src.api.helpers.api_helpers import delete_user_by_email, create_user
 from src.api.helpers.api_helpers import login_admin, delete_product_by_nome
+from src.ui.pages.login_page import LoginPage
+from src.ui.pages.home_page import HomePage
+
 
 @pytest.fixture(scope="session")
 def serverrest_config() -> ServerRestConfig:
-    """Configuração do ServeRest (UI e API base URLs)."""
+    """serverest config (UI e API base URLs)."""
     return load_serverrest_config()
 
 @pytest.fixture
-def registered_user(serverrest_config: ServerRestConfig):
-    """Setup: create user via API. Teardown: delete user via API after test."""
-    email = "testerava@email.com"
+def logged_in_home(page: Page, serverrest_config: ServerRestConfig):
+    """Create user, login via UI, and yield HomePage (already on /home)."""
+    email = "producttest@email.com"
     password = "teste123"
-    nome = "Ava Test"
+    nome = "Product Test User"
 
-    # setup
     delete_user_by_email(serverrest_config, email)
-    user_id = create_user(serverrest_config, email, password, nome, administrador="true")
+    create_user(serverrest_config, email, password, nome, administrador="false")
 
-    yield {"email": email, "password": password, "nome": nome, "id": user_id}
-
-    # teardown
-    delete_user_by_email(serverrest_config, email)
+    try:
+        login_page = LoginPage(page, serverrest_config)
+        login_page.open()
+        login_page.login(email, password)
+        page.wait_for_url("**/home**", timeout=10000)
+        home_page = HomePage(page, serverrest_config)
+        home_page.open()
+        yield home_page
+    finally:
+        delete_user_by_email(serverrest_config, email)
 
 @pytest.fixture
 def registered_product(serverrest_config: ServerRestConfig, registered_user):

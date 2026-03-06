@@ -10,7 +10,7 @@
 .\venv\Scripts\python.exe -m pytest tests\serverrest\ui\admin\ -q
 
 ### Run a single test
-.\venv\Scripts\python.exe -m pytest tests\serverrest\ui\login-register\test_login.py::test_login_page_loads -q
+.\venv\Scripts\python.exe -m pytest tests\ui\login\test_login.py::TestLogin::test_login_with_registered_user -q
 
 
 ## Allure Report (requires Java installed)
@@ -23,3 +23,4 @@ allure serve allure-results
 
 ## Notes
 - Environment variables: SERVERREST_UI_BASE_URL, SERVERREST_API_BASE_URL
+

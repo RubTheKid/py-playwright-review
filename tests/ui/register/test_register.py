@@ -5,7 +5,6 @@ from src.config import ServerRestConfig
 from src.ui.pages.register_page import RegisterPage
 
 class TestRegister:
-
     @pytest.mark.ui
     def test_register_page_loads(self, page: Page, serverrest_config: ServerRestConfig) -> None:
         """Verify that the register page loads with all expected elements."""
