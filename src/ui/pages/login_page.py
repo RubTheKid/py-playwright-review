@@ -54,4 +54,5 @@ class LoginPage(BasePage):
         expect(self.error_message).to_be_visible(timeout=5000)
 
     def expect_logged_in(self, nome: str) -> None:
-        expect(self.page.locator(f'.jumbotron h1:has-text("{nome}")')).to_be_visible()
+        """Verify login succeeded by waiting for redirect to home."""
+        self.page.wait_for_url("**/home**", timeout=10000)

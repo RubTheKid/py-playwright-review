@@ -1,20 +1,3 @@
-# from playwright.sync_api import expect
-# from src.ui.pages.base_page import BasePage
-
-# class RegisterPage(BasePage):
-#     def open(self) -> None:
-#         self.goto("/login")
-#         self.page.locator('a[data-testid="cadastrar"]').click()
-
-#     def register(self, nome: str, email: str, password: str) -> None:
-#         self.page.locator('input[data-testid="nome"]').fill(nome)
-#         self.page.locator('input[data-testid="email"]').fill(email)
-#         self.page.locator('input[data-testid="password"]').fill(password)
-#         self.page.locator('button[data-testid="cadastrar"]').click()
-
-#     def expect_success(self) -> None:
-#         expect(self.page.locator('div.alert.alert-primary')).to_be_visible()
-
 from playwright.sync_api import Page, Locator, expect
 from src.ui.pages.base_page import BasePage
 
@@ -52,6 +35,15 @@ class RegisterPage(BasePage):
         expect(self.error_name_required).to_be_visible()
         expect(self.error_email_required).to_be_visible()
         expect(self.error_password_required).to_be_visible()
+
+    def expect_success(self) -> None:
+        """Verify registration succeeded: either success alert or redirect to home."""
+        success_alert = self.page.locator('div.alert').filter(has_text="Cadastro realizado com sucesso")
+        try:
+            expect(success_alert).to_be_visible(timeout=3000)
+        except AssertionError:
+            # Fallback: successful registration redirects to /home
+            self.page.wait_for_url("**/home**", timeout=8000)
 
     # inputs
     @property
