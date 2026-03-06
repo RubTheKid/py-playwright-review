@@ -3,6 +3,7 @@ from playwright.sync_api import expect
 
 class AdminListProductPage(BasePage):
     def open(self) -> None:
+        self.goto("/admin/listarprodutos")
         self.wait_for_url("/admin/listarprodutos")
 
     def expect_product_in_list(self, name: str, price: str, description: str, quantity: str) -> None:

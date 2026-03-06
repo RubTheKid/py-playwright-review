@@ -21,7 +21,7 @@
       "label": "pytest: login (registered user)",
       "type": "shell",
       "command": "${workspaceFolder}/venv/Scripts/python.exe",
-      "args": ["-m", "pytest", "-q", "tests/ui/login/test_login.py::TestLogin::test_login_with_registered_user"],
+      "args": ["-m", "pytest", "-q", "tests/ui/login/test_login_ui.py::TestLogin::test_login_with_registered_user"],
       "group": "test",
       "presentation": { "reveal": "always" }
     },

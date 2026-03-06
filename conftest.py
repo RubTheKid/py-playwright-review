@@ -13,6 +13,22 @@ def serverrest_config() -> ServerRestConfig:
     """serverest config (UI e API base URLs)."""
     return load_serverrest_config()
 
+
+@pytest.fixture
+def register_admin_user(serverrest_config: ServerRestConfig):
+    """Setup: create admin user via API. Teardown: delete user after test."""
+    email = "testerava@email.com"
+    password = "teste123"
+    nome = "Ava Test"
+
+    delete_user_by_email(serverrest_config, email)
+    user_id = create_user(serverrest_config, email, password, nome, administrador="true")
+
+    yield {"email": email, "password": password, "nome": nome, "id": user_id}
+
+    delete_user_by_email(serverrest_config, email)
+
+
 @pytest.fixture
 def logged_in_home(page: Page, serverrest_config: ServerRestConfig):
     """Create user, login via UI, and yield HomePage (already on /home)."""
@@ -35,10 +51,10 @@ def logged_in_home(page: Page, serverrest_config: ServerRestConfig):
         delete_user_by_email(serverrest_config, email)
 
 @pytest.fixture
-def registered_product(serverrest_config: ServerRestConfig, registered_user):
+def registered_product(serverrest_config: ServerRestConfig, register_admin_user):
     """Setup: delete 'Product 1' if leftover from previous run. Teardown: delete after test."""
     nome = "Product 1"
-    token = login_admin(serverrest_config, registered_user["email"], registered_user["password"])
+    token = login_admin(serverrest_config, register_admin_user["email"], register_admin_user["password"])
 
     # setup
     delete_product_by_nome(serverrest_config, token, nome)

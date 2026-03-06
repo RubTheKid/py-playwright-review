@@ -16,7 +16,7 @@ class TestDashboard:
         self,
         page: Page,
         serverrest_config: ServerRestConfig,
-        registered_user: dict,
+        register_admin_user: dict,
     ) -> None:
         """Login as admin, register a new user in dashboard, verify in user list."""
 
@@ -27,8 +27,8 @@ class TestDashboard:
         try:
             login_page = LoginPage(page, serverrest_config)
             login_page.open()
-            login_page.login(registered_user["email"], registered_user["password"])
-            login_page.expect_logged_in(registered_user["nome"])
+            login_page.login(register_admin_user["email"], register_admin_user["password"])
+            login_page.expect_logged_in(register_admin_user["nome"])
 
             admin_register = AdminRegisterPage(page, serverrest_config)
             admin_register.open()
@@ -42,7 +42,7 @@ class TestDashboard:
         self,
         page: Page,
         serverrest_config: ServerRestConfig,
-        registered_user: dict,
+        register_admin_user: dict,
         registered_product: dict,
     ) -> None:
         """Login as admin, register a new product in dashboard, verify in product list."""
@@ -54,12 +54,23 @@ class TestDashboard:
 
         login_page = LoginPage(page, serverrest_config)
         login_page.open()
-        login_page.login(registered_user["email"], registered_user["password"])
-        login_page.expect_logged_in(registered_user["nome"])
+        login_page.login(register_admin_user["email"], register_admin_user["password"])
+        login_page.expect_logged_in(register_admin_user["nome"])
 
         admin_register_product = AdminRegisterProductPage(page, serverrest_config)
         admin_register_product.open()
-        admin_register_product.register(new_product_name, new_product_price, new_product_description, new_product_quantity)
+        admin_register_product.register(
+            new_product_name,
+            new_product_price,
+            new_product_description,
+            new_product_quantity,
+        )
 
         admin_list_product = AdminListProductPage(page, serverrest_config)
-        admin_list_product.expect_product_in_list(new_product_name, new_product_price, new_product_description, new_product_quantity)
+        admin_list_product.open()
+        admin_list_product.expect_product_in_list(
+            new_product_name,
+            new_product_price,
+            new_product_description,
+            new_product_quantity,
+        )

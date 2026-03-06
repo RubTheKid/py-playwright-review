@@ -2,7 +2,6 @@ from playwright.sync_api import Page, Locator, expect
 
 from src.ui.pages.base_page import BasePage
 
-
 class HomePage(BasePage):
     """Page Object Model for Front - ServeRest @page /home"""
 
